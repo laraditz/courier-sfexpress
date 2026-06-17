@@ -1,0 +1,10 @@
+{
+    "apiResultCode": "A1000",
+    "apiResultData": {
+        "waybillNo": "SF1234567890",
+        "routeInfo": {
+            "destCity": "Kuala Lumpur",
+            "estimatedDeliveryDate": "2026-06-19"
+        }
+    }
+}

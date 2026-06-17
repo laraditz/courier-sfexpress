@@ -1,0 +1,8 @@
+{
+    "apiResultCode": "A1000",
+    "apiResultData": {
+        "waybillNo": "SF1234567890",
+        "labelType": "PDF",
+        "labelContent": "AAAABBBBCCCCDDDD"
+    }
+}

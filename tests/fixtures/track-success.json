@@ -1,0 +1,20 @@
+{
+    "apiResultCode": "A1000",
+    "apiResultData": {
+        "waybillNo": "SF1234567890",
+        "routeSteps": [
+            {
+                "acceptTime": "2026-06-17 10:00:00",
+                "acceptAddress": "Kuala Lumpur Hub",
+                "remark": "Package picked up by courier",
+                "opCode": "50"
+            },
+            {
+                "acceptTime": "2026-06-17 14:30:00",
+                "acceptAddress": "Subang Jaya Sorting Center",
+                "remark": "In transit",
+                "opCode": "30"
+            }
+        ]
+    }
+}

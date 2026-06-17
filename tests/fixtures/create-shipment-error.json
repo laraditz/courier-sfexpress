@@ -1,0 +1,6 @@
+{
+    "apiResultCode": "A2001",
+    "apiResultData": {
+        "errorMsg": "Invalid sender address."
+    }
+}

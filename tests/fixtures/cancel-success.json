@@ -1,0 +1,7 @@
+{
+    "apiResultCode": "A1000",
+    "apiResultData": {
+        "waybillNo": "SF1234567890",
+        "cancelResult": "SUCCESS"
+    }
+}

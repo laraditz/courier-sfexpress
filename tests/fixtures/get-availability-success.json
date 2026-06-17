@@ -1,0 +1,19 @@
+{
+    "apiResultCode": "A1000",
+    "apiResultData": {
+        "serviceList": [
+            {
+                "serviceCode": "STANDARD",
+                "serviceName": "Standard Delivery",
+                "description": "3-5 business days",
+                "promisedDeliveryDays": 4
+            },
+            {
+                "serviceCode": "EXPRESS",
+                "serviceName": "Express Delivery",
+                "description": "Next day delivery",
+                "promisedDeliveryDays": 1
+            }
+        ]
+    }
+}

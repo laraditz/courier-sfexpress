@@ -1,0 +1,21 @@
+{
+    "apiResultCode": "A1000",
+    "apiResultData": {
+        "queryResult": [
+            {
+                "serviceCode": "STANDARD",
+                "serviceName": "Standard Delivery",
+                "totalCost": 12.50,
+                "currency": "MYR",
+                "promisedDeliveryDays": 3
+            },
+            {
+                "serviceCode": "EXPRESS",
+                "serviceName": "Express Delivery",
+                "totalCost": 22.00,
+                "currency": "MYR",
+                "promisedDeliveryDays": 1
+            }
+        ]
+    }
+}
