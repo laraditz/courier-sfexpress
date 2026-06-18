@@ -20,7 +20,7 @@ class SfExpressServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__.'/../config/sfexpress.php' => config_path('courier.php'),
+                __DIR__.'/../config/sfexpress.php' => config_path('sfexpress.php'),
             ], 'courier-sfexpress-config');
         }
     }
