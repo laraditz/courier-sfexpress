@@ -19,7 +19,7 @@ class SfExpressEncryptor
         $aesKey = base64_decode($this->encodingAesKey . '=');
         $iv     = substr($aesKey, 0, 16);
 
-        $raw = openssl_encrypt($padded, 'AES-256-CBC', $aesKey, OPENSSL_NO_PADDING, $iv);
+        $raw = openssl_encrypt($padded, 'AES-256-CBC', $aesKey, OPENSSL_RAW_DATA | OPENSSL_NO_PADDING, $iv);
         if ($raw === false) {
             throw new \RuntimeException('SF Express AES encryption failed.');
         }
@@ -40,7 +40,7 @@ class SfExpressEncryptor
             base64_decode($ciphertext),
             'AES-256-CBC',
             $aesKey,
-            OPENSSL_NO_PADDING,
+            OPENSSL_RAW_DATA | OPENSSL_NO_PADDING,
             $iv
         );
 

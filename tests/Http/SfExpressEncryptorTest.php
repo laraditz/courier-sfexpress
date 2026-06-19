@@ -4,7 +4,9 @@ namespace Laraditz\Courier\SfExpress\Tests\Http;
 
 use Laraditz\Courier\SfExpress\Http\SfExpressEncryptor;
 use Laraditz\Courier\SfExpress\Tests\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(SfExpressEncryptor::class)]
 class SfExpressEncryptorTest extends TestCase
 {
     // Sandbox credentials from apidoc/Credentials for Sandbox ENV
