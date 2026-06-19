@@ -2,21 +2,14 @@
 
 namespace Laraditz\Courier\SfExpress\Mappers;
 
-use Laraditz\Courier\DTOs\Results\RateCollection;
-use Laraditz\Courier\DTOs\Results\RateOption;
+use Laraditz\Courier\Exceptions\UnsupportedOperationException;
 
 class RateMapper
 {
-    public static function map(array $data): RateCollection
+    public static function map(array $data): never
     {
-        $items = array_map(fn (array $item) => new RateOption(
-            serviceCode: $item['serviceCode'],
-            serviceName: $item['serviceName'],
-            price: (float) $item['totalCost'],
-            currency: $item['currency'],
-            estimatedDays: isset($item['promisedDeliveryDays']) ? (int) $item['promisedDeliveryDays'] : null,
-        ), $data['queryResult'] ?? []);
-
-        return new RateCollection($items);
+        throw new UnsupportedOperationException(
+            'Not supported for SF Express Domestic.'
+        );
     }
 }

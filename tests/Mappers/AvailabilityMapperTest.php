@@ -2,22 +2,17 @@
 
 namespace Laraditz\Courier\SfExpress\Tests\Mappers;
 
-use Laraditz\Courier\DTOs\Results\ServiceCollection;
+use Laraditz\Courier\Exceptions\UnsupportedOperationException;
 use Laraditz\Courier\SfExpress\Mappers\AvailabilityMapper;
 use Laraditz\Courier\SfExpress\Tests\TestCase;
 
 class AvailabilityMapperTest extends TestCase
 {
-    public function test_maps_availability_response(): void
+    public function test_throws_unsupported_operation_exception(): void
     {
-        $data = $this->fixture('get-availability-success')['apiResultData'];
+        $this->expectException(UnsupportedOperationException::class);
+        $this->expectExceptionMessageMatches('/Not supported/');
 
-        $collection = AvailabilityMapper::map($data);
-
-        $this->assertInstanceOf(ServiceCollection::class, $collection);
-        $this->assertCount(2, $collection->items);
-        $this->assertSame('STANDARD', $collection->items[0]->code);
-        $this->assertSame('Standard Delivery', $collection->items[0]->name);
-        $this->assertSame(4, $collection->items[0]->estimatedDays);
+        AvailabilityMapper::map([]);
     }
 }

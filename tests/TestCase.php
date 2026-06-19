@@ -19,10 +19,17 @@ class TestCase extends Orchestra
     protected function getEnvironmentSetUp($app): void
     {
         $app['config']->set('courier.drivers.sfexpress', [
-            'account' => 'test-account',
-            'key'     => 'test-key',
-            'secret'  => 'test-secret',
-            'sandbox' => true,
+            'key'              => 'test-key',
+            'secret'           => 'test-secret',
+            'customer_code'    => 'TEST-CUSTOMER-CODE',
+            'encoding_aes_key' => 'oI1YdU1cb1YC70HVjZRa3wXBLUsrIUYr5lDh0gFrMbe',
+            'pay_month_card'   => 'TESTJACK0004',
+            'country'          => 'MY',
+            'scope_name'       => 'OSMY',
+            'sandbox'          => true,
+            'sandbox_url'      => 'https://api-ifsp-sit.sf.global',
+            'base_url'         => 'https://api-ifsp.sf.global',
+            'timeout'          => 30,
         ]);
     }
 

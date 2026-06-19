@@ -2,20 +2,14 @@
 
 namespace Laraditz\Courier\SfExpress\Mappers;
 
-use Laraditz\Courier\DTOs\Results\ServiceCollection;
-use Laraditz\Courier\DTOs\Results\ServiceOption;
+use Laraditz\Courier\Exceptions\UnsupportedOperationException;
 
 class AvailabilityMapper
 {
-    public static function map(array $data): ServiceCollection
+    public static function map(array $data): never
     {
-        $items = array_map(fn (array $item) => new ServiceOption(
-            code: $item['serviceCode'],
-            name: $item['serviceName'],
-            description: $item['description'] ?? '',
-            estimatedDays: isset($item['promisedDeliveryDays']) ? (int) $item['promisedDeliveryDays'] : null,
-        ), $data['serviceList'] ?? []);
-
-        return new ServiceCollection($items);
+        throw new UnsupportedOperationException(
+            'Not supported for SF Express Domestic.'
+        );
     }
 }

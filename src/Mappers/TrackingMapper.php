@@ -5,10 +5,10 @@ namespace Laraditz\Courier\SfExpress\Mappers;
 use Carbon\Carbon;
 use Laraditz\Courier\DTOs\Results\TrackingEvent;
 use Laraditz\Courier\DTOs\Results\TrackingResult;
+use Laraditz\Courier\Exceptions\ShipmentNotFoundException;
 
 class TrackingMapper
 {
-    // SF Express opCode → normalized status vocabulary
     private static array $opCodeMap = [
         '50' => 'picked_up',
         '30' => 'in_transit',
@@ -18,26 +18,36 @@ class TrackingMapper
         '35' => 'returned',
     ];
 
-    public static function map(array $data): TrackingResult
+    public static function map(array $data, string $trackingNumber): TrackingResult
     {
-        $steps = $data['routeSteps'] ?? [];
-        $events = array_map(fn (array $step) => new TrackingEvent(
-            timestamp: Carbon::parse($step['acceptTime']),
-            location: $step['acceptAddress'] ?? '',
-            description: $step['remark'] ?? '',
-            status: self::$opCodeMap[$step['opCode'] ?? ''] ?? 'unknown',
-        ), $steps);
+        $entry = $data[0] ?? [];
+
+        if (empty($entry['trackList']) && !empty($entry['trackSummary'])) {
+            throw new ShipmentNotFoundException(
+                "Waybill [{$trackingNumber}] not found."
+            );
+        }
+
+        $events = array_map(
+            fn (array $step) => new TrackingEvent(
+                timestamp:   Carbon::parse($step['localTm']),
+                location:    '',
+                description: $step['trackOutRemark'] ?: ($step['opCodeTranslation'] ?? ''),
+                status:      self::$opCodeMap[$step['opCode'] ?? ''] ?? 'unknown',
+            ),
+            $entry['trackList'] ?? []
+        );
 
         $latestStatus = !empty($events)
             ? $events[array_key_last($events)]->status
             : 'unknown';
 
         return new TrackingResult(
-            waybillNumber: $data['waybillNo'],
+            waybillNumber: $entry['sfWaybillNo'] ?? $trackingNumber,
             status: $latestStatus,
             estimatedDelivery: null,
             events: $events,
-            meta: ['raw_steps' => $steps],
+            meta: ['track_summary' => $entry['trackSummary'] ?? null],
         );
     }
 }

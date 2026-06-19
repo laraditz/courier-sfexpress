@@ -6,14 +6,14 @@ use Laraditz\Courier\DTOs\Results\CancelResult;
 
 class CancelMapper
 {
-    public static function map(array $data): CancelResult
+    public static function map(array $inner): CancelResult
     {
-        $success = ($data['cancelResult'] ?? '') === 'SUCCESS';
+        $success = (bool) ($inner['success'] ?? false);
 
         return new CancelResult(
             success: $success,
-            message: $success ? 'Shipment cancelled successfully.' : 'Cancellation failed.',
-            meta: ['cancel_result' => $data['cancelResult'] ?? null],
+            message: $inner['msg'] ?? ($success ? 'Cancelled.' : 'Cancellation failed.'),
+            meta: ['code' => $inner['code'] ?? null],
         );
     }
 }
