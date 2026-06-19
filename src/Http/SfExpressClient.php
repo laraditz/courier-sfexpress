@@ -102,7 +102,8 @@ class SfExpressClient
 
         if (($data['apiResultCode'] ?? -1) !== 0) {
             throw new AuthenticationException(
-                'SF Express authentication error [' . ($data['apiResultCode'] ?? 'unknown') . ']'
+                'SF Express authentication error [' . ($data['apiResultCode'] ?? 'unknown') . ']: ' .
+                ($data['apiErrorMsg'] ?? 'Unknown error')
             );
         }
 

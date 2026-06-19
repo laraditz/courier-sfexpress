@@ -37,4 +37,12 @@ class LabelMapperTest extends TestCase
 
         LabelMapper::map(['url' => 'https://storage.example.com/missing.pdf'], 'MYIU000');
     }
+
+    public function test_throws_courier_exception_when_url_key_missing(): void
+    {
+        $this->expectException(CourierException::class);
+        $this->expectExceptionMessageMatches('/missing url field/');
+
+        LabelMapper::map([], 'MYIU000');
+    }
 }

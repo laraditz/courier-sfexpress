@@ -10,7 +10,10 @@ class LabelMapper
 {
     public static function map(array $data, string $waybillNumber): LabelResult
     {
-        $url      = $data['url'];
+        $url = $data['url'] ?? null;
+        if ($url === null) {
+            throw new CourierException('SF Express label response missing url field.');
+        }
         $response = Http::get($url);
 
         if ($response->failed()) {

@@ -27,7 +27,7 @@ class TestCase extends Orchestra
             'country'          => 'MY',
             'scope_name'       => 'OSMY',
             'sandbox'          => true,
-            'sandbox_url'      => 'http://api-ifsp-sit.sf.global',
+            'sandbox_url'      => 'https://api-ifsp-sit.sf.global',
             'base_url'         => 'https://api-ifsp.sf.global',
             'timeout'          => 30,
         ]);

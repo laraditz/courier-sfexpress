@@ -13,6 +13,7 @@ use Laraditz\Courier\DTOs\Results\ServiceCollection;
 use Laraditz\Courier\DTOs\Results\ShipmentResult;
 use Laraditz\Courier\DTOs\Results\TrackingResult;
 use Laraditz\Courier\DTOs\Shared\Address;
+use Laraditz\Courier\Exceptions\AuthenticationException;
 use Laraditz\Courier\Exceptions\CourierException;
 use Laraditz\Courier\Exceptions\ShipmentNotFoundException;
 use Laraditz\Courier\SfExpress\Http\SfExpressClient;
@@ -68,6 +69,8 @@ class SfExpressDriver implements CourierDriver
                 'customerCode' => $this->client->customerCode(),
                 'sfWaybillNos' => [$trackingNumber],
             ]);
+        } catch (AuthenticationException $e) {
+            throw $e;
         } catch (CourierException $e) {
             throw new ShipmentNotFoundException(
                 "Waybill [{$trackingNumber}] not found.",

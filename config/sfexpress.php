@@ -10,6 +10,6 @@ return [
     'scope_name'       => env('SFEXPRESS_SCOPE', 'OSMY'),
     'sandbox'          => env('SFEXPRESS_SANDBOX', false),
     'base_url'         => 'https://api-ifsp.sf.global',
-    'sandbox_url'      => 'http://api-ifsp-sit.sf.global',
+    'sandbox_url'      => 'https://api-ifsp-sit.sf.global',
     'timeout'          => 30,
 ];
