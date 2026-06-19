@@ -8,27 +8,32 @@ use Laraditz\Courier\SfExpress\Tests\TestCase;
 
 class ShipmentMapperTest extends TestCase
 {
-    public function test_maps_success_response_to_shipment_result(): void
+    public function test_maps_success_data_to_shipment_result(): void
     {
-        $data = $this->fixture('create-shipment-success')['apiResultData'];
+        $data = [
+            'sfWaybillNo'     => 'MYIU1234715622',
+            'labelUrl'        => 'https://storage.example.com/label.pdf',
+            'customerOrderNo' => '1713259580917094',
+        ];
 
         $result = ShipmentMapper::map($data);
 
         $this->assertInstanceOf(ShipmentResult::class, $result);
-        $this->assertSame('SF1234567890', $result->waybillNumber);
+        $this->assertSame('MYIU1234715622', $result->waybillNumber);
         $this->assertSame('pending', $result->status);
-        $this->assertNotNull($result->estimatedDelivery);
-        $this->assertSame('2026-06-19', $result->estimatedDelivery->format('Y-m-d'));
-        $this->assertSame('SF1234567890', $result->meta()['raw_waybill_no']);
+        $this->assertNull($result->estimatedDelivery);
+        $this->assertSame('https://storage.example.com/label.pdf', $result->meta()['label_url']);
+        $this->assertSame('1713259580917094', $result->meta()['customer_order_no']);
     }
 
-    public function test_handles_missing_estimated_delivery(): void
+    public function test_handles_missing_optional_fields(): void
     {
-        $data = ['waybillNo' => 'SF999', 'routeInfo' => []];
+        $data = ['sfWaybillNo' => 'MYIU999'];
 
         $result = ShipmentMapper::map($data);
 
-        $this->assertSame('SF999', $result->waybillNumber);
-        $this->assertNull($result->estimatedDelivery);
+        $this->assertSame('MYIU999', $result->waybillNumber);
+        $this->assertNull($result->meta()['label_url']);
+        $this->assertNull($result->meta()['customer_order_no']);
     }
 }
