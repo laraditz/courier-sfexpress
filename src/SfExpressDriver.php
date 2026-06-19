@@ -27,129 +27,100 @@ class SfExpressDriver implements CourierDriver
 {
     private SfExpressClient $client;
 
-    public function __construct(array $config)
+    public function __construct(array $config, ?SfExpressClient $client = null)
     {
-        $this->client = new SfExpressClient($config);
+        $this->client = $client ?? new SfExpressClient($config);
     }
 
     public function createShipment(ShipmentPayload $payload): ShipmentResult
     {
-        $data = $this->client->post('/shipment/create', [
-            'language'    => 'en',
-            'partnerID'   => $this->client->account(),
-            'serviceCode' => $payload->serviceCode,
-            'sender'      => $this->formatAddress($payload->sender),
-            'recipient'   => $this->formatAddress($payload->recipient),
-            'cargo' => [
-                'weight'        => $payload->parcel->weight,
-                'length'        => $payload->parcel->length,
-                'width'         => $payload->parcel->width,
-                'height'        => $payload->parcel->height,
-                'declaredValue' => $payload->parcel->declaredValue,
-                'goodsDesc'     => $payload->parcel->description,
-                'quantity'      => $payload->parcel->quantity,
+        $inner = $this->client->dispatch('IUOP_OS_CREATE_ORDER', [
+            'customerCode'      => $this->client->customerCode(),
+            'interProductCode'  => $payload->serviceCode,
+            'parcelQuantity'    => $payload->parcel->quantity ?? 1,
+            'parcelTotalWeight' => $payload->parcel->weight,
+            'parcelWeightUnit'  => 'KG',
+            'parcelVolumeUnit'  => 'CM',
+            'parcelTotalLength' => $payload->parcel->length,
+            'parcelTotalWidth'  => $payload->parcel->width,
+            'parcelTotalHeight' => $payload->parcel->height,
+            'remark'            => $payload->remarks ?? '',
+            'pickupType'        => 0,
+            'paymentInfo'       => [
+                'payMethod'    => '1',
+                'payMonthCard' => $this->client->payMonthCard(),
             ],
-            'remark' => $payload->remarks,
+            'parcelInfoList'    => [[
+                'name'   => $payload->parcel->description ?? 'Parcel',
+                'weight' => $payload->parcel->weight,
+            ]],
+            'senderInfo'        => $this->formatAddress($payload->sender),
+            'receiverInfo'      => $this->formatAddress($payload->recipient),
         ]);
 
-        return ShipmentMapper::map($data);
+        return ShipmentMapper::map($inner['data']);
     }
 
     public function track(string $trackingNumber): TrackingResult
     {
         try {
-            $data = $this->client->post('/shipment/route', [
-                'language'       => 'en',
-                'trackingType'   => 1,
-                'trackingNumber' => [$trackingNumber],
+            $inner = $this->client->dispatch('IUOP_OS_QUERY_TRACK', [
+                'customerCode' => $this->client->customerCode(),
+                'sfWaybillNos' => [$trackingNumber],
             ]);
         } catch (CourierException $e) {
-            if (str_contains($e->getMessage(), 'A2002') || str_contains($e->getMessage(), 'not found')) {
-                throw new ShipmentNotFoundException(
-                    "Waybill [{$trackingNumber}] not found.",
-                    previous: $e
-                );
-            }
-            throw $e;
+            throw new ShipmentNotFoundException(
+                "Waybill [{$trackingNumber}] not found.",
+                previous: $e
+            );
         }
 
-        return TrackingMapper::map($data);
-    }
-
-    public function getRates(RatePayload $payload): RateCollection
-    {
-        $data = $this->client->post('/shipment/queryFreight', [
-            'language' => 'en',
-            'originAddress' => [
-                'country'  => $payload->origin->country,
-                'province' => $payload->origin->state,
-                'city'     => $payload->origin->city,
-                'postcode' => $payload->origin->postcode,
-            ],
-            'destAddress' => [
-                'country'  => $payload->destination->country,
-                'province' => $payload->destination->state,
-                'city'     => $payload->destination->city,
-                'postcode' => $payload->destination->postcode,
-            ],
-            'weight' => $payload->parcel->weight,
-        ]);
-
-        return RateMapper::map($data);
-    }
-
-    public function cancelShipment(string $waybillNumber): CancelResult
-    {
-        $data = $this->client->post('/shipment/cancel', [
-            'language'  => 'en',
-            'waybillNo' => $waybillNumber,
-        ]);
-
-        return CancelMapper::map($data);
+        return TrackingMapper::map($inner['data'], $trackingNumber);
     }
 
     public function getLabel(string $waybillNumber): LabelResult
     {
-        $data = $this->client->post('/shipment/label', [
-            'language'  => 'en',
-            'waybillNo' => $waybillNumber,
-            'labelType' => 'PDF',
+        $inner = $this->client->dispatch('IUOP_OS_PRINT_ORDER', [
+            'customerCode'          => $this->client->customerCode(),
+            'printType'             => 1,
+            'printWaybillNoDtoList' => [['sfWaybillNo' => $waybillNumber]],
         ]);
 
-        return LabelMapper::map($data);
+        return LabelMapper::map($inner['data'], $waybillNumber);
+    }
+
+    public function cancelShipment(string $waybillNumber): CancelResult
+    {
+        $inner = $this->client->dispatch('IUOP_OS_CANCEL_ORDER', [
+            'customerCode' => $this->client->customerCode(),
+            'sfWaybillNo'  => $waybillNumber,
+        ]);
+
+        return CancelMapper::map($inner);
+    }
+
+    public function getRates(RatePayload $payload): RateCollection
+    {
+        return RateMapper::map([]);
     }
 
     public function getAvailability(AvailabilityPayload $payload): ServiceCollection
     {
-        $data = $this->client->post('/service/queryByAddress', [
-            'language' => 'en',
-            'originAddress' => [
-                'country'  => $payload->origin->country,
-                'province' => $payload->origin->state,
-                'city'     => $payload->origin->city,
-                'postcode' => $payload->origin->postcode,
-            ],
-            'destAddress' => [
-                'country'  => $payload->destination->country,
-                'province' => $payload->destination->state,
-                'city'     => $payload->destination->city,
-                'postcode' => $payload->destination->postcode,
-            ],
-        ]);
-
-        return AvailabilityMapper::map($data);
+        return AvailabilityMapper::map([]);
     }
 
     private function formatAddress(Address $address): array
     {
         return [
-            'name'     => $address->name,
-            'mobile'   => $address->phone ?? '',
-            'address'  => implode(', ', array_filter([$address->line1, $address->line2, $address->line3])),
-            'city'     => $address->city,
-            'province' => $address->state,
-            'postcode' => $address->postcode,
-            'country'  => $address->country,
+            'contact'      => $address->name,
+            'country'      => $address->country,
+            'phoneNo'      => $address->phone ?? '',
+            'postCode'     => $address->postcode,
+            'address'      => implode(', ', array_filter([$address->line1, $address->line2, $address->line3])),
+            'regionFirst'  => $address->state ?? '',
+            'regionSecond' => $address->city ?? '',
+            'regionThird'  => '',
+            'email'        => $address->email ?? '',
         ];
     }
 }
