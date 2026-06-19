@@ -87,11 +87,10 @@ class SfExpressClient
         }
 
         $response = Http::timeout($this->config['timeout'] ?? 30)
-            ->withHeaders([
+            ->get($this->baseUrl() . '/openapi/api/token', [
                 'appKey'    => $this->config['key'],
                 'appSecret' => $this->config['secret'],
-            ])
-            ->get($this->baseUrl() . '/openapi/api/token');
+            ]);
 
         if ($response->failed()) {
             throw new AuthenticationException(

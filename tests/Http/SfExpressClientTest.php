@@ -54,7 +54,7 @@ class SfExpressClientTest extends TestCase
         $inner = ['success' => true, 'code' => '0', 'msg' => 'ok', 'data' => ['sfWaybillNo' => 'MYIU123']];
 
         Http::fake([
-            '*/openapi/api/token'    => Http::response($this->tokenResponse(), 200),
+            '*/openapi/api/token*'    => Http::response($this->tokenResponse(), 200),
             '*/openapi/api/dispatch' => Http::response($this->dispatchResponse($inner), 200),
         ]);
 
@@ -70,7 +70,7 @@ class SfExpressClientTest extends TestCase
         $inner = ['success' => true, 'code' => '0', 'msg' => 'ok', 'data' => []];
 
         Http::fake([
-            '*/openapi/api/token'    => Http::response($this->tokenResponse(), 200),
+            '*/openapi/api/token*'    => Http::response($this->tokenResponse(), 200),
             '*/openapi/api/dispatch' => Http::response($this->dispatchResponse($inner), 200),
         ]);
 
@@ -93,7 +93,7 @@ class SfExpressClientTest extends TestCase
         $inner = ['success' => true, 'code' => '0', 'msg' => 'ok', 'data' => []];
 
         Http::fake([
-            '*/openapi/api/token'    => Http::response($this->tokenResponse(), 200),
+            '*/openapi/api/token*'    => Http::response($this->tokenResponse(), 200),
             '*/openapi/api/dispatch' => Http::response($this->dispatchResponse($inner), 200),
         ]);
 
@@ -107,7 +107,7 @@ class SfExpressClientTest extends TestCase
     public function test_throws_authentication_exception_when_token_fetch_returns_http_error(): void
     {
         Http::fake([
-            '*/openapi/api/token' => Http::response('Server Error', 500),
+            '*/openapi/api/token*' => Http::response('Server Error', 500),
         ]);
 
         $this->expectException(AuthenticationException::class);
@@ -118,7 +118,7 @@ class SfExpressClientTest extends TestCase
     public function test_throws_authentication_exception_when_token_is_missing(): void
     {
         Http::fake([
-            '*/openapi/api/token' => Http::response([
+            '*/openapi/api/token*' => Http::response([
                 'apiResultCode' => 0,
                 'apiResultData' => ['accessToken' => '', 'expireIn' => 7200],
             ], 200),
@@ -132,7 +132,7 @@ class SfExpressClientTest extends TestCase
     public function test_throws_courier_exception_when_outer_api_result_code_is_not_zero(): void
     {
         Http::fake([
-            '*/openapi/api/token'    => Http::response($this->tokenResponse(), 200),
+            '*/openapi/api/token*'    => Http::response($this->tokenResponse(), 200),
             '*/openapi/api/dispatch' => Http::response([
                 'apiResultCode' => 502,
                 'apiErrorMsg'   => 'Request parameter error',
@@ -151,7 +151,7 @@ class SfExpressClientTest extends TestCase
         $inner = ['success' => false, 'code' => '9001', 'msg' => 'Customer order not found'];
 
         Http::fake([
-            '*/openapi/api/token'    => Http::response($this->tokenResponse(), 200),
+            '*/openapi/api/token*'    => Http::response($this->tokenResponse(), 200),
             '*/openapi/api/dispatch' => Http::response($this->dispatchResponse($inner), 200),
         ]);
 
