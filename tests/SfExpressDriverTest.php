@@ -175,6 +175,14 @@ class SfExpressDriverTest extends TestCase
         $this->assertTrue($result->success);
     }
 
+    public function test_get_shipment_throws_unsupported_operation_exception(): void
+    {
+        $this->expectException(UnsupportedOperationException::class);
+
+        $driver = new SfExpressDriver([], $this->makeClient());
+        $driver->getShipment('MYIU1234715622');
+    }
+
     public function test_get_rates_throws_unsupported_operation_exception(): void
     {
         $this->expectException(UnsupportedOperationException::class);
