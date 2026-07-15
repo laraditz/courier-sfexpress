@@ -62,6 +62,13 @@ class SfExpressDriver implements CourierDriver
         return ShipmentMapper::map($inner['data']);
     }
 
+    public function getShipment(string $reference): ShipmentResult
+    {
+        throw new \Laraditz\Courier\Exceptions\UnsupportedOperationException(
+            'SF Express does not support order inquiry.'
+        );
+    }
+
     public function track(string $trackingNumber): TrackingResult
     {
         try {
@@ -81,7 +88,7 @@ class SfExpressDriver implements CourierDriver
         return TrackingMapper::map($inner['data'], $trackingNumber);
     }
 
-    public function getLabel(string $waybillNumber): LabelResult
+    public function getLabel(string $waybillNumber, ?string $reference = null): LabelResult
     {
         $inner = $this->client->dispatch('IUOP_OS_PRINT_ORDER', [
             'customerCode'          => $this->client->customerCode(),
@@ -92,7 +99,7 @@ class SfExpressDriver implements CourierDriver
         return LabelMapper::map($inner['data'], $waybillNumber);
     }
 
-    public function cancelShipment(string $waybillNumber): CancelResult
+    public function cancelShipment(string $waybillNumber, ?string $reference = null): CancelResult
     {
         $inner = $this->client->dispatch('IUOP_OS_CANCEL_ORDER', [
             'customerCode' => $this->client->customerCode(),
