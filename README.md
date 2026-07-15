@@ -73,13 +73,14 @@ return [
 | Method | Parameters | Returns | Notes |
 |---|---|---|---|
 | `createShipment` | `ShipmentPayload $payload` | `ShipmentResult` | `IUOP_OS_CREATE_ORDER` |
+| `getShipment` | `string $reference` | — | Throws `UnsupportedOperationException` |
 | `track` | `string $trackingNumber` | `TrackingResult` | `IUOP_OS_QUERY_TRACK` |
-| `getLabel` | `string $waybillNumber` | `LabelResult` | `IUOP_OS_PRINT_ORDER` — PDF bytes |
-| `cancelShipment` | `string $waybillNumber` | `CancelResult` | `IUOP_OS_CANCEL_ORDER` |
+| `getLabel` | `string $waybillNumber, ?string $reference = null` | `LabelResult` | `IUOP_OS_PRINT_ORDER` — PDF bytes. `$reference` is accepted for interface compatibility but unused. |
+| `cancelShipment` | `string $waybillNumber, ?string $reference = null` | `CancelResult` | `IUOP_OS_CANCEL_ORDER`. `$reference` is accepted for interface compatibility but unused. |
 | `getRates` | `RatePayload $payload` | — | Throws `UnsupportedOperationException` |
 | `getAvailability` | `AvailabilityPayload $payload` | — | Throws `UnsupportedOperationException` |
 
-Rate queries and service availability checks are not supported by the SF Express domestic API.
+Rate queries, service availability checks, and order inquiry are not supported by the SF Express domestic API.
 
 Refer to the [laraditz/courier README](https://github.com/laraditz/courier) for payload/result DTO definitions and full usage examples.
 
