@@ -13,6 +13,7 @@ use Laraditz\Courier\DTOs\Results\ServiceCollection;
 use Laraditz\Courier\DTOs\Results\ShipmentResult;
 use Laraditz\Courier\DTOs\Results\TrackingResult;
 use Laraditz\Courier\DTOs\Shared\Address;
+use Laraditz\Courier\Enums\DeliveryMode;
 use Laraditz\Courier\Exceptions\AuthenticationException;
 use Laraditz\Courier\Exceptions\CourierException;
 use Laraditz\Courier\Exceptions\ShipmentNotFoundException;
@@ -117,6 +118,11 @@ class SfExpressDriver implements CourierDriver
     public function getAvailability(AvailabilityPayload $payload): ServiceCollection
     {
         return AvailabilityMapper::map([]);
+    }
+
+    public function getDeliveryModes(): array
+    {
+        return [DeliveryMode::Scheduled];
     }
 
     private function formatAddress(Address $address): array
